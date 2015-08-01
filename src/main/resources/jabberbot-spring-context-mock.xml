@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--suppress RequiredBeanTypeInspection -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:int="http://www.springframework.org/schema/integration"
+       xmlns:int-xmpp="http://www.springframework.org/schema/integration/xmpp"
+       xmlns:task="http://www.springframework.org/schema/task"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration.xsd
+		http://www.springframework.org/schema/integration/xmpp http://www.springframework.org/schema/integration/xmpp/spring-integration-xmpp.xsd http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd">
+
+    <context:component-scan base-package="cz.janys.jabberbot.**"/>
+
+    <bean id="jabberbotScheduler" class="org.mockito.Mockito" factory-method="mock">
+        <constructor-arg value="org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler"/>
+    </bean>
+    <bean id="inboundChannel" class="org.mockito.Mockito" factory-method="mock">
+        <constructor-arg value="org.springframework.messaging.SubscribableChannel"/>
+    </bean>
+    <bean id="outboundChannel" class="org.mockito.Mockito" factory-method="mock">
+        <constructor-arg value="org.springframework.messaging.MessageChannel"/>
+    </bean>
+
+</beans>

@@ -11,16 +11,25 @@
         http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration.xsd
 		http://www.springframework.org/schema/integration/xmpp http://www.springframework.org/schema/integration/xmpp/spring-integration-xmpp.xsd http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd">
 
-    <context:component-scan base-package="cz.janys.jabberbot.**"/>
+    <int-xmpp:xmpp-connection id="connection"
+                             user="${jabber.user.login}"
+                             password="${jabber.user.password}"
+                             host="${jabber.user.host}"
+                             service-name="${jabber.user.service}"
+                             port="${jabber.user.port}"
+                             subscription-mode="accept_all"/>
 
-    <bean id="jabberbotScheduler" class="org.mockito.Mockito" factory-method="mock">
-        <constructor-arg value="org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler"/>
-    </bean>
-    <bean id="inboundChannel" class="org.mockito.Mockito" factory-method="mock">
-        <constructor-arg value="org.springframework.messaging.SubscribableChannel"/>
-    </bean>
-    <bean id="outboundChannel" class="org.mockito.Mockito" factory-method="mock">
-        <constructor-arg value="org.springframework.messaging.MessageChannel"/>
-    </bean>
+    <!-- Sender -->
+
+    <int:channel id="outboundChannel"/>
+
+    <int-xmpp:outbound-channel-adapter channel="outboundChannel" xmpp-connection="connection"/>
+
+    <!-- Receiver -->
+
+    <!--<int:logging-channel-adapter id="inboundChannel"/>-->
+    <int:channel id="inboundChannel"/>
+
+    <int-xmpp:inbound-channel-adapter channel="inboundChannel" xmpp-connection="connection"/>
 
 </beans>

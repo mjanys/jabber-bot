@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 /**
  * @author Martin Janys
@@ -22,6 +23,8 @@ import java.util.Map;
 @Lazy(false)
 @SuppressWarnings("unchecked")
 public class JabberMessageDispatcher implements MessageHandler, InitializingBean {
+
+    private static final Logger log = Logger.getLogger(JabberMessageDispatcher.class.getName());
 
     @Autowired(required = false)
     private List<JabberMessageHandler> handlers;
@@ -55,6 +58,11 @@ public class JabberMessageDispatcher implements MessageHandler, InitializingBean
     }
 
     public synchronized void handleMessage(Message<?> originalMessage) throws MessagingException {
+        if (isError(originalMessage)) {
+            JabberMessage message = new JabberMessage(originalMessage);
+            log.warning("Error from: " + message.from() + ", payload: " + message.getPayload());
+            return;
+        }
         if (!CollectionUtils.isEmpty(handlers)) {
             for (JabberMessageHandler handler : handlers) {
                 JabberMessage message = handler.parseMessage(originalMessage);
@@ -74,9 +82,15 @@ public class JabberMessageDispatcher implements MessageHandler, InitializingBean
         }
     }
 
+    private boolean isError(Message<?> originalMessage) {
+        JabberMessage message = new JabberMessage(originalMessage);
+        return "error".equals(message.type());
+    }
+
     private ConversationScope<String, Object> getConversationScope(String conversationId) {
         if (!conversations.containsKey(conversationId)) {
-            ConversationScope<String, Object> conversation = ConversationScope.create(configurations.get(conversationId));
+            ConversationConfiguration configuration = configurations != null ? configurations.get(conversationId) : null;
+            ConversationScope<String, Object> conversation = ConversationScope.create(configuration);
             conversations.put(conversationId, conversation);
         }
         return conversations.get(conversationId);

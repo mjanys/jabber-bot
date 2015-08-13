@@ -43,6 +43,10 @@ public class JabberMessage {
         return  (String) getHeader(XmppHeaders.TO);
     }
 
+    public String type() {
+        return ((org.jivesoftware.smack.packet.Message.Type)getHeader(XmppHeaders.TYPE)).name();
+    }
+
     public Message<?> getOriginalMessage() {
         return originalMessage;
     }
